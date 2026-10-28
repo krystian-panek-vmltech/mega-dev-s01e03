@@ -49,7 +49,7 @@ Exported 2026-10-04 from the `support` repo, `apps/kb/` → `src/`.
 
 412 unique reports (the export has 427 rows; 15 ids repeat).
 
-- The page: [`src/routes/kb/incidents/4471-split/+page.svx`](src/routes/kb/incidents/4471-split/+page.svx), signed, desk ref `DR-23QE-A8WQ`.
+- The page: [`src/routes/kb/incidents/4471-split/+page.svx`](src/routes/kb/incidents/4471-split/+page.svx), signed with the course ticket, desk ref `DR-7Y85-K8B5`.
 - The page as the desk sees it (prerendered): [`rendered/kb/incidents/4471-split/index.html`](rendered/kb/incidents/4471-split/index.html).
 - Logic: [`src/lib/kb/problems.ts`](src/lib/kb/problems.ts), table [`ProblemTable.svelte`](src/lib/kb/ProblemTable.svelte). Ids per problem: [`problems-4471.json`](problems-4471.json).
 - Build: `npm ci && npx vite build` (SvelteKit + mdsvex + adapter-static; output in `build/`).
