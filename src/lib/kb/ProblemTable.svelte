@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { splitTicket, PROBLEMS, TRACKER } from '#lib/kb/problems';
+  import { splitTicket, oneDayIn, PROBLEMS, TRACKER } from '#lib/kb/problems';
 
   let { ticket }: { ticket: number } = $props();
 
@@ -33,7 +33,16 @@
   </tbody>
 </table>
 
+{#each split.groups as g (g.problem)}
+  {@const moved = g.problem === 'unplaced' || g.problem === 'one-day' ? 0 : oneDayIn(ticket, g.problem)}
+  {#if moved}
+    <p class="note">{moved} of the <code>{g.problem}</code> reports read as a one-day move. The desk files them under
+      <code>{g.problem}</code> by tenant, so they count there, and again under <code>one-day</code>, their own problem
+      (<a href="{TRACKER}/issues/{PROBLEMS['one-day'].issue}">#{PROBLEMS['one-day'].issue}</a>).</p>
+  {/if}
+{/each}
+
 <style>
   .sum { font-size: 1.1rem; }
-  .tags, .what { color: var(--muted); font-size: 0.85em; }
+  .tags, .what, .note { color: var(--muted); font-size: 0.85em; }
 </style>

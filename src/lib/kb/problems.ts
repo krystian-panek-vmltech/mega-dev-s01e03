@@ -30,9 +30,14 @@ export const PROBLEMS: Record<Problem, { issue: number; title: string; what: str
 };
 export const ORDER: Problem[] = ['parser', 'hint', 'one-day'];
 
-export function problemOf(r: Report, oneDay: readonly string[] = notes.oneDayMove): Problem | 'unplaced' {
-  if (oneDay.includes(r.id)) return 'one-day';
+// The desk's view (CauseTable): every report is counted where it is filed, by tenant and way in.
+// A one-day move is filed by tenant too, so it stays in that count; it is its own problem as well,
+// so its ticket counts it again. Its reports overlap the problem they are filed under.
+export function filedAs(r: Report): Problem | 'unplaced' {
   return causeOf(r, tenantOf(r)) ?? 'unplaced';
+}
+export function isOneDay(r: Report, oneDay: readonly string[] = notes.oneDayMove): boolean {
+  return oneDay.includes(r.id);
 }
 
 export type ProblemGroup = {
@@ -50,9 +55,11 @@ export function splitTicket(ticket: number): { exported: number; merged: Report[
   const merged = uniqueById(all).filter((r) => r.mergedInto === ticket);
   const by = new Map<ProblemGroup['problem'], Report[]>();
   for (const r of merged) {
-    const p = problemOf(r);
+    const p = filedAs(r);
     by.set(p, [...(by.get(p) ?? []), r]);
   }
+  const oneDay = merged.filter((r) => isOneDay(r));
+  if (oneDay.length) by.set('one-day', oneDay);
   const groups = [...by.entries()]
     .map(([problem, rs]) => {
       const days = rs.map((r) => r.receivedAt.slice(0, 10)).sort();
@@ -66,7 +73,15 @@ export function splitTicket(ticket: number): { exported: number; merged: Report[
       };
     })
     .sort((a, b) => b.reports.length - a.reports.length);
+  // Filed groups first, the overlapping one-day group last.
+  groups.sort((a, b) => Number(a.problem === 'one-day') - Number(b.problem === 'one-day'));
   return { exported: all.length, merged, groups };
+}
+
+// Reports filed under `problem` that the desk read as a one-day move.
+export function oneDayIn(ticket: number, problem: Problem): number {
+  if (problem === 'one-day') return 0;
+  return splitTicket(ticket).groups.find((g) => g.problem === problem)?.reports.filter((r) => isOneDay(r)).length ?? 0;
 }
 
 export function countOf(ticket: number, problem: Problem): number {

@@ -43,11 +43,11 @@ Exported 2026-10-04 from the `support` repo, `apps/kb/` → `src/`.
 
 | problem | reports | issue |
 |---|---|---|
-| `parser`: shared parser reads day-first dates month first | 374 | #1 |
+| `parser`: shared parser reads day-first dates month first | 379 | #1 |
 | `hint`: booking-v3 form hint says MM/DD/YYYY | 33 | #2 |
-| `one-day`: invite date moves by one day (time zone / DST) | 5 | #3 |
+| `one-day`: invite date moves by one day (time zone / DST) | 5 (also in the 379) | #3 |
 
-412 unique reports (the export has 427 rows; 15 ids repeat).
+412 unique reports (the export has 427 rows; 15 ids repeat). Counted the desk's way: each report where it is filed (379 + 33 = 412); the 5 one-day moves are filed under `parser` and counted again as their own problem.
 
 - The page: [`src/routes/kb/incidents/4471-split/+page.svx`](src/routes/kb/incidents/4471-split/+page.svx), signed with the course ticket, desk ref `DR-7Y85-K8B5`.
 - The page as the desk sees it (prerendered): [`rendered/kb/incidents/4471-split/index.html`](rendered/kb/incidents/4471-split/index.html).

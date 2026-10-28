@@ -43,7 +43,8 @@ hint. The fix is the form's hint.
 No swap of day and month moves a date by one day. "Invite says Tuesday 12 May. Calendar says
 Monday 11 May." "Client in Lisbon got Tuesday. Client in Toronto got Monday." "Every booking in
 June is one day off." This is a time-zone or summer-time shift, not the parser. The desk had
-already marked these reports (`desk-notes.json`), but #4471 still counts them under `parser`.
+already marked these reports (`desk-notes.json`). The desk counts a report where it is filed,
+by tenant, so these stay in the `parser` count too; the parser fix will not close them.
 
 ## Why one ticket hid three
 
@@ -63,7 +64,8 @@ already marked these reports (`desk-notes.json`), but #4471 still counts them un
    own reproduction: a meeting seen from two time zones, and a booking across the summer-time change.
 4. Split by what the body shows when a big ticket grows. Subject alone merges different bugs.
 
-Counts on this page are built from the export at render time. When the desk adds reports or
-marks more one-day moves, the numbers follow.
+Counts follow the desk's view of the export: one id once, each report counted where it is filed,
+and the one-day move counted again as its own problem. They are built at render time, so when the
+desk adds reports or marks more one-day moves, the numbers follow.
 
 <RenderStamp {signature} />
