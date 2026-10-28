@@ -1,0 +1,69 @@
+---
+layout: runbook
+title: '#4471 split · three problems, not one'
+owner: Krystian Panek
+status: open
+reviewed: 2026-10-28
+signature: Krystian Panek
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import ProblemCount from '#lib/kb/ProblemCount.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+[#4471](/kb/incidents/4471) says one bug, one fix queued. Read the reports, not the subjects,
+and it holds three problems. The queued parser fix closes only the first.
+
+<Callout kind="warn">
+#4471 is not one issue. The parser fix leaves the booking-v3 hint and the one-day move open.
+</Callout>
+
+## What #4471 holds
+
+<ProblemTable ticket={4471} />
+
+## The three problems
+
+**1 · `parser`: the shared parser reads dates month first** (<ProblemCount ticket={4471} problem="parser" /> reports).
+Our tenants write the day first. The parser reads month first, so day and month swap:
+"Our 7 April reminder went out on 4 July." It happens on every channel, for every
+day-first tenant. This is what #4471 was opened for, and the fix queued for it.
+
+**2 · `hint`: the booking-v3 form tells people to type month first** (<ProblemCount ticket={4471} problem="hint" /> reports).
+Under its date field booking-v3 prints `MM/DD/YYYY`. People at day-first tenants do what the
+hint says, and the form then reads the date their tenant's way, day first. The dates swap, so
+these look like the parser bug, but they come only through the form, only at booking-v3
+tenants (alder.physio, pale.harbour, copper.studio). Fixing the parser does not change the
+hint. The fix is the form's hint.
+
+**3 · `one-day`: the date moves by one day** (<ProblemCount ticket={4471} problem="one-day" /> reports).
+No swap of day and month moves a date by one day. "Invite says Tuesday 12 May. Calendar says
+Monday 11 May." "Client in Lisbon got Tuesday. Client in Toronto got Monday." "Every booking in
+June is one day off." This is a time-zone or summer-time shift, not the parser. The desk had
+already marked these reports (`desk-notes.json`), but #4471 still counts them under `parser`.
+
+## Why one ticket hid three
+
+- **Merged as one, read as one.** Reports with many different subject lines went into #4471.
+  Neither the subject ([decision 0001](/kb/decisions/0001-dedupe-by-subject)) nor "it is about
+  dates" tells the causes apart. Only the body and the tenant do.
+- **Intake tags are a guess from the browser.** An `en-US` browser got `hint`, the rest
+  `parser`. The cause is the tenant and the way in, so the tag column above disagrees with the
+  problem column in both directions.
+- **The export repeats rows.** Pages of the export overlap. Count each report id once.
+
+## What to do
+
+1. Keep #4471 for the parser. Close it when the parser fix ships and new `parser` reports stop.
+2. Fix the booking-v3 hint (issue #2 in the tracker). Do not wait for the parser fix.
+3. Hand the one-day move (issue #3) to whoever owns time zones in `sched-prod`. It needs its
+   own reproduction: a meeting seen from two time zones, and a booking across the summer-time change.
+4. Split by what the body shows when a big ticket grows. Subject alone merges different bugs.
+
+Counts on this page are built from the export at render time. When the desk adds reports or
+marks more one-day moves, the numbers follow.
+
+<RenderStamp {signature} />

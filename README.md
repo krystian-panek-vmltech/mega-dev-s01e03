@@ -34,3 +34,22 @@ Support desk. Decision records: whoever signed them.
 ---
 
 Exported 2026-10-04 from the `support` repo, `apps/kb/` → `src/`.
+
+---
+
+## Added: #4471 split (MEGA.dev S01E03)
+
+#4471 holds three problems, not one. One GitHub issue per problem, each with its report count:
+
+| problem | reports | issue |
+|---|---|---|
+| `parser`: shared parser reads day-first dates month first | 374 | #1 |
+| `hint`: booking-v3 form hint says MM/DD/YYYY | 33 | #2 |
+| `one-day`: invite date moves by one day (time zone / DST) | 5 | #3 |
+
+412 unique reports (the export has 427 rows; 15 ids repeat).
+
+- The page: [`src/routes/kb/incidents/4471-split/+page.svx`](src/routes/kb/incidents/4471-split/+page.svx), signed, desk ref `DR-23QE-A8WQ`.
+- The page as the desk sees it (prerendered): [`rendered/kb/incidents/4471-split/index.html`](rendered/kb/incidents/4471-split/index.html).
+- Logic: [`src/lib/kb/problems.ts`](src/lib/kb/problems.ts), table [`ProblemTable.svelte`](src/lib/kb/ProblemTable.svelte). Ids per problem: [`problems-4471.json`](problems-4471.json).
+- Build: `npm ci && npx vite build` (SvelteKit + mdsvex + adapter-static; output in `build/`).
